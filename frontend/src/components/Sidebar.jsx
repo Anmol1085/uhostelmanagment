@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Users, Bed, CreditCard, LogOut, FileText, ShoppingCart, Megaphone, ClipboardList } from 'lucide-react';
+import { Home, Users, Bed, CreditCard, LogOut, FileText, ShoppingCart, Megaphone, ClipboardList, Key } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/authSlice';
 import { api } from '../utils/api';
@@ -14,12 +14,12 @@ const Sidebar = () => {
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: <Home size={20} />, roles: ['Admin', 'Student'] },
     { name: 'Notice Board', path: '/notices', icon: <Megaphone size={20} />, roles: ['Admin', 'Student'] },
-    { name: 'Rooms', path: '/rooms', icon: <Bed size={20} />, roles: ['Admin', 'Student'] },
-    { name: 'Room Requests', path: '/bookings', icon: <ClipboardList size={20} />, roles: ['Admin'] },
+    { name: 'Rooms', path: '/rooms', icon: <Bed size={20} />, roles: ['Admin'] },
     { name: 'Gate Pass', path: '/gatepass', icon: <FileText size={20} />, roles: ['Admin', 'Student'] },
     { name: 'ECanteen', path: '/canteen', icon: <ShoppingCart size={20} />, roles: ['Admin', 'Student'] },
     { name: 'Students', path: '/students', icon: <Users size={20} />, roles: ['Admin'] },
     { name: 'Fines', path: '/fines', icon: <CreditCard size={20} />, roles: ['Admin', 'Student'] },
+    { name: 'Security', path: '/change-password', icon: <Key size={20} />, roles: ['Student'] },
   ];
 
   const filteredNavItems = navItems.filter(item => item.roles.includes(userInfo?.role || 'Student'));

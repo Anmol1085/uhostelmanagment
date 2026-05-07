@@ -85,6 +85,8 @@ const Rooms = () => {
   const fetchStudents = async () => {
     try {
       const data = await api.get('/auth/users');
+      // Fix: Get students who are either unassigned or assigned to the CURRENT selected room
+      // This allows moving students or seeing residents in the dropdown if needed
       setStudents(data.filter(u => u.role === 'Student'));
     } catch (err) {
       console.error('Failed to fetch students', err);
@@ -343,9 +345,13 @@ const Rooms = () => {
                               value={selectedStudentId}
                               onChange={(e) => setSelectedStudentId(e.target.value)}
                             >
-                              <option value="">Select a student...</option>
-                              {students.filter(s => !s.room_id).map(s => (
-                                <option key={s._id} value={s._id}>{s.name} ({s.email})</option>
+                              <option value="">Select a student to allocate...</option>
+                              {students
+                                .filter(s => !s.room_id || (s.room_id?._id !== selectedRoom._id && s.room_id !== selectedRoom._id))
+                                .map(s => (
+                                  <option key={s._id} value={s._id}>
+                                    {s.name} ({s.room_id ? `Currently: Room ${s.room_id.room_number || 'Other'}` : 'Unassigned'})
+                                  </option>
                               ))}
                             </select>
                             <button type="submit" className="btn-primary" style={{ padding: '8px 15px' }}>Assign</button>

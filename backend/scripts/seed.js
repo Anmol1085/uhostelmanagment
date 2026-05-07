@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import User from './models/User.js';
-import Room from './models/Room.js';
-import Booking from './models/Booking.js';
-import connectDB from './config/db.js';
+import User from '../src/models/User.js';
+import Room from '../src/models/Room.js';
+import Booking from '../src/models/Booking.js';
+import connectDB from '../src/config/db.js';
 
 dotenv.config();
 connectDB();
@@ -11,12 +11,12 @@ connectDB();
 const seedData = async () => {
   try {
     // Clear existing users
-    await User.deleteMany({ email: { $in: ['admin@example.com', 'student@example.com'] } });
+    await User.deleteMany({ email: { $in: ['admin@uhostel.com', 'admin@example.com', 'student@example.com'] } });
 
     // Create Admin Account
     const admin = await User.create({
       name: 'Admin User',
-      email: 'admin@example.com',
+      email: 'admin@uhostel.com',
       password: 'password123',
       role: 'Admin',
       isVerified: true

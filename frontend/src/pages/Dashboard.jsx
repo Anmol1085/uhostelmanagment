@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '../components/Sidebar';
 import { useNavigate } from 'react-router-dom';
-import { User as UserIcon, Bed, Home, CreditCard, CheckCircle, XCircle, Users, FileText, AlertTriangle } from 'lucide-react';
+import { User as UserIcon, Bed, Home, CreditCard, CheckCircle, XCircle, Users, FileText, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { api } from '../utils/api';
 
 const AnimatedCounter = ({ from, to, duration = 2 }) => {
@@ -29,7 +29,7 @@ const AnimatedCounter = ({ from, to, duration = 2 }) => {
   return <span>{count}</span>;
 }
 
-const DashboardRowItem = ({ title, value, icon, prefix = '', onClick }) => {
+const DashboardRowItem = ({ title, value, icon, prefix = '', onClick, color = 'var(--color-accent)', bgColor = 'var(--color-accent-light)' }) => {
   return (
     <div 
       onClick={onClick}
@@ -41,11 +41,11 @@ const DashboardRowItem = ({ title, value, icon, prefix = '', onClick }) => {
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
         <h3 style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', fontWeight: 500 }}>{title}</h3>
-        <div style={{ padding: '10px', borderRadius: '8px', background: `var(--color-accent-light)`, color: `var(--color-accent)` }}>
+        <div style={{ padding: '10px', borderRadius: '8px', background: bgColor, color: color }}>
            {icon}
         </div>
       </div>
-      <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--color-accent)' }}>
+      <div style={{ fontSize: '2.5rem', fontWeight: 700, color: color }}>
         {prefix}<AnimatedCounter from={0} to={value} />
       </div>
     </div>
@@ -90,22 +90,66 @@ const Dashboard = () => {
     <div style={{ display: 'flex', background: 'var(--color-bg)', minHeight: '100vh' }}>
       <Sidebar />
       <main style={{ marginLeft: '300px', padding: '40px', flex: 1 }}>
-        <header style={{ marginBottom: '40px' }}>
-          <h1 style={{ fontSize: '1.8rem', color: 'var(--color-accent)', fontWeight: 700 }}>
-            {isAdmin ? 'Admin Dashboard' : `Welcome, ${stats.user?.name?.split(' ')[0] || 'Student'}!`}
-          </h1>
-          <p style={{ color: 'var(--color-text-muted)', marginTop: '5px' }}>
-            {isAdmin ? 'Hostel overview and statistics' : 'Your hostel stay details and status'}
-          </p>
+        <header style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div>
+            <h1 style={{ fontSize: '1.8rem', color: 'var(--color-accent)', fontWeight: 700 }}>
+              {isAdmin ? 'Admin Dashboard' : `Welcome, ${stats.user?.name?.split(' ')[0] || 'Student'}!`}
+            </h1>
+            <p style={{ color: 'var(--color-text-muted)', marginTop: '5px' }}>
+              {isAdmin ? 'Hostel overview and statistics' : 'Your hostel stay details and status'}
+            </p>
+          </div>
+          {!isAdmin && stats.user.room && (
+            <div style={{ 
+              display: 'flex', alignItems: 'center', gap: '12px', 
+              background: 'var(--color-accent-light)', padding: '10px 20px', 
+              borderRadius: '12px', border: '1px solid var(--color-border)' 
+            }}>
+              <Bed size={20} color="var(--color-accent)" />
+              <div>
+                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Allocated Room</p>
+                <p style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-accent)' }}>Room {stats.user.room.room_number}</p>
+              </div>
+            </div>
+          )}
         </header>
 
         {isAdmin ? (
           <>
             <div style={{ display: 'flex', gap: '24px', marginBottom: '40px' }}>
-              <DashboardRowItem title="Total Students" value={stats.totalStudents} icon={<Users size={20} />} onClick={() => navigate('/students')} />
-              <DashboardRowItem title="Room Availability" value={stats.availableRooms} icon={<Home size={20} />} onClick={() => navigate('/rooms')} />
-              <DashboardRowItem title="Pending Gate Pass" value={stats.pendingGatePasses} icon={<FileText size={20} />} onClick={() => navigate('/gatepass')} />
-              <DashboardRowItem title="Pending Fines" value={stats.pendingFines} prefix="₹" icon={<AlertTriangle size={20} />} onClick={() => navigate('/fines')} />
+              <DashboardRowItem 
+                title="Total Students" 
+                value={stats.totalStudents} 
+                icon={<Users size={20} />} 
+                onClick={() => navigate('/students')} 
+                color="#2563EB"
+                bgColor="#DBEAFE"
+              />
+              <DashboardRowItem 
+                title="Room Availability" 
+                value={stats.availableRooms} 
+                icon={<Home size={20} />} 
+                onClick={() => navigate('/rooms')} 
+                color="#059669"
+                bgColor="#D1FAE5"
+              />
+              <DashboardRowItem 
+                title="Pending Gate Pass" 
+                value={stats.pendingGatePasses} 
+                icon={<FileText size={20} />} 
+                onClick={() => navigate('/gatepass')} 
+                color="#7C3AED"
+                bgColor="#F3E8FF"
+              />
+              <DashboardRowItem 
+                title="Pending Fines" 
+                value={stats.pendingFines} 
+                prefix="₹" 
+                icon={<AlertTriangle size={20} />} 
+                onClick={() => navigate('/fines')} 
+                color="#DC2626"
+                bgColor="#FEE2E2"
+              />
             </div>
             
             <div style={{ display: 'flex', gap: '24px' }}>
@@ -135,69 +179,34 @@ const Dashboard = () => {
             <div style={{ display: 'flex', gap: '24px' }}>
               <div className="minimal-card" style={{ flex: 1, padding: '30px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
-                  <div style={{ padding: '12px', borderRadius: '12px', background: 'var(--color-accent-light)', color: 'var(--color-accent)' }}>
-                    <Bed size={24} />
+                  <div style={{ padding: '12px', borderRadius: '12px', background: '#F3E8FF', color: '#7C3AED' }}>
+                    <ShieldCheck size={24} />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <h3 style={{ fontWeight: 600 }}>My Room</h3>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Room Assignment</p>
-                  </div>
-                  {stats.user.room && (
-                    <span style={{ 
-                      padding: '5px 12px', borderRadius: '20px', background: '#D1FAE5', color: '#059669', 
-                      fontSize: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '5px' 
-                    }}>
-                      <CheckCircle size={14} /> Room Approved
-                    </span>
-                  )}
-                </div>
-                {stats.user.room ? (
-                  <div>
-                    <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--color-accent)', marginBottom: '15px' }}>
-                      Room {stats.user.room.room_number}
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.95rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: 'var(--color-text-muted)' }}>Capacity:</span>
-                        <span>{stats.user.room.capacity} Seater</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: 'var(--color-text-muted)' }}>Status:</span>
-                        <span style={{ color: '#059669', fontWeight: 600 }}>{stats.user.room.status}</span>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div style={{ padding: '20px', background: 'var(--color-accent-light)', borderRadius: '8px', color: 'var(--color-accent)', textAlign: 'center' }}>
-                    Not assigned to a room yet.
-                  </div>
-                )}
-              </div>
-
-              <div className="minimal-card" style={{ flex: 1, padding: '30px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
-                  <div style={{ padding: '12px', borderRadius: '12px', background: '#DBEAFE', color: '#2563EB' }}>
-                    <Users size={24} />
-                  </div>
-                  <div>
-                    <h3 style={{ fontWeight: 600 }}>Roommates</h3>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Your shared space</p>
+                    <h3 style={{ fontWeight: 600 }}>Security</h3>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Account protection</p>
                   </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {stats.roommates?.length > 0 ? stats.roommates.map((mate, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px', background: 'var(--color-surface)', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--color-accent-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-accent)', fontSize: '0.8rem', fontWeight: 600 }}>
-                        {mate.name?.charAt(0) || 'U'}
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <p style={{ fontSize: '0.9rem', fontWeight: 500 }}>{mate.name}</p>
-                        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{mate.email}</p>
-                      </div>
-                    </div>
-                  )) : (
-                    <p style={{ color: 'var(--color-text-muted)', textAlign: 'center', padding: '20px' }}>No roommates yet.</p>
-                  )}
+                <div style={{ textAlign: 'center', padding: '10px 0' }}>
+                  <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: '15px' }}>
+                    Keep your account secure by updating your password regularly.
+                  </p>
+                  <button 
+                    onClick={() => navigate('/change-password')}
+                    style={{ 
+                      background: '#F3E8FF', 
+                      border: 'none', 
+                      color: '#7C3AED', 
+                      fontWeight: 700, 
+                      cursor: 'pointer', 
+                      fontSize: '0.85rem',
+                      padding: '8px 20px',
+                      borderRadius: '20px',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    Change Password
+                  </button>
                 </div>
               </div>
 
@@ -212,14 +221,21 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div style={{ textAlign: 'center', padding: '20px' }}>
-                  <div style={{ fontSize: '2rem', fontWeight: 700, color: stats.pendingFinesAmount > 0 ? '#DC2626' : '#059669', marginBottom: '10px' }}>
+                  <div style={{ fontSize: '2.5rem', fontWeight: 800, color: stats.pendingFinesAmount > 0 ? '#DC2626' : '#059669', marginBottom: '10px' }}>
                     ₹{stats.pendingFinesAmount || 0}
                   </div>
                   <button 
                     onClick={() => navigate('/fines')}
                     style={{ 
-                      background: 'none', border: 'none', color: 'var(--color-accent)', 
-                      fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' 
+                      background: stats.pendingFinesAmount > 0 ? '#FEE2E2' : '#D1FAE5', 
+                      border: 'none', 
+                      color: stats.pendingFinesAmount > 0 ? '#DC2626' : '#059669', 
+                      fontWeight: 700, 
+                      cursor: 'pointer', 
+                      fontSize: '0.85rem',
+                      padding: '8px 16px',
+                      borderRadius: '20px',
+                      transition: 'all 0.2s'
                     }}
                   >
                     View Details
@@ -248,7 +264,9 @@ const Dashboard = () => {
                   <tbody>
                     {stats.bookings?.length > 0 ? stats.bookings.map((booking) => (
                       <tr key={booking._id} style={{ borderBottom: '1px solid var(--color-border)' }}>
-                        <td style={{ padding: '12px 15px', fontWeight: 500 }}>{booking.room_number || 'N/A'}</td>
+                        <td style={{ padding: '12px 15px', fontWeight: 500 }}>
+                          {booking.room_number || (stats.user.room ? `Room ${stats.user.room.room_number}` : 'N/A')}
+                        </td>
                         <td style={{ padding: '12px 15px' }}>{new Date(booking.start_date).toLocaleDateString()}</td>
                         <td style={{ padding: '12px 15px' }}>{booking.duration} Months</td>
                         <td style={{ padding: '12px 15px' }}>

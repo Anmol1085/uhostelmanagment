@@ -112,3 +112,24 @@ export const addProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// @desc    Delete product (Admin)
+// @route   DELETE /api/canteen/products/:id
+// @access  Private/Admin
+export const deleteProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (product) {
+      // Instead of physical deletion, we mark it as unavailable
+      // or we can physically delete it if no orders are linked to it.
+      // For simplicity in this hostel project, let's physically delete it.
+      await Product.findByIdAndDelete(req.params.id);
+      res.json({ message: 'Product removed' });
+    } else {
+      res.status(404).json({ message: 'Product not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

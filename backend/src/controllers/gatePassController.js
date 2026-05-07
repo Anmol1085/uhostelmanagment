@@ -7,6 +7,22 @@ export const applyForGatePass = async (req, res) => {
   const { reason, departure_time, return_time } = req.body;
 
   try {
+    // Validation: Check if departure_time is in the past
+    const now = new Date();
+    const departureDate = new Date(departure_time);
+    
+    // Set both to start of minute for fair comparison
+    now.setSeconds(0, 0);
+    departureDate.setSeconds(0, 0);
+
+    if (departureDate < now) {
+      return res.status(400).json({ message: 'Departure time cannot be in the past' });
+    }
+
+    if (new Date(return_time) <= departureDate) {
+      return res.status(400).json({ message: 'Return time must be after departure time' });
+    }
+
     const gatePass = await GatePass.create({
       student_id: req.user._id,
       reason,

@@ -8,7 +8,8 @@ import {
   getUsers,
   updateUser,
   deleteUser,
-  getUserProfile
+  getUserProfile,
+  changePassword
 } from '../controllers/authController.js';
 import { protect, admin } from '../middleware/auth.js';
 
@@ -20,6 +21,7 @@ router.post('/login', loginUser);
 router.post('/verify-login', verifyLoginOTP);
 router.post('/logout', logoutUser);
 router.get('/profile', protect, getUserProfile);
+router.put('/change-password', protect, changePassword);
 
 router.route('/users')
   .get(protect, admin, getUsers);

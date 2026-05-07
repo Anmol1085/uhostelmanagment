@@ -14,8 +14,8 @@ export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    if (!email.endsWith('@gmail.com') && !email.endsWith('@example.com')) {
-      return res.status(400).json({ message: 'Only @gmail.com or @example.com addresses are allowed' });
+    if (!email.endsWith('@gmail.com') && !email.endsWith('@example.com') && !email.endsWith('@uhostel.com')) {
+      return res.status(400).json({ message: 'Only @gmail.com, @example.com or @uhostel.com addresses are allowed' });
     }
 
     const userExists = await User.findOne({ email });
@@ -38,12 +38,11 @@ export const registerUser = async (req, res) => {
       sendOTP(email, otpValue)
     ]);
 
-    // Provide generic success for security (also send back user data minimally to maintain flow state)
+    // Provide generic success for security
     res.status(200).json({
       message: 'OTP sent to email',
       email,
       name,
-      ...(process.env.NODE_ENV === 'development' && { dev_otp: otpValue })
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -104,13 +103,25 @@ export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    if (!email.endsWith('@gmail.com') && !email.endsWith('@example.com')) {
-      return res.status(400).json({ message: 'Only @gmail.com or @example.com addresses are allowed' });
+    if (!email.endsWith('@gmail.com') && !email.endsWith('@example.com') && !email.endsWith('@uhostel.com')) {
+      return res.status(400).json({ message: 'Only @gmail.com, @example.com or @uhostel.com addresses are allowed' });
     }
 
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
+      // Permanent fix: Skip OTP for specific admin email
+      if (email === 'admin@uhostel.com') {
+        generateToken(res, user._id);
+        return res.status(200).json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          message: 'Admin login successful'
+        });
+      }
+
       // Check if student user is verified
       if (user.role === 'Student' && !user.isVerified) {
         return res.status(403).json({ message: 'Your account is not verified. Please contact the administrator.' });
@@ -128,7 +139,6 @@ export const loginUser = async (req, res) => {
       res.status(200).json({
         message: 'OTP sent to email',
         email,
-        ...(process.env.NODE_ENV === 'development' && { dev_otp: otpValue })
       });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
@@ -271,6 +281,27 @@ export const deleteUser = async (req, res) => {
       res.json({ message: 'User removed' });
     } else {
       res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Change user password
+// @route   PUT /api/auth/change-password
+// @access  Private
+export const changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user && (await user.matchPassword(currentPassword))) {
+      user.password = newPassword;
+      await user.save();
+      res.status(200).json({ message: 'Password changed successfully' });
+    } else {
+      res.status(401).json({ message: 'Invalid current password' });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });

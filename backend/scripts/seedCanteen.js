@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import Product from './models/Product.js';
-import connectDB from './config/db.js';
+import Product from '../src/models/Product.js';
+import connectDB from '../src/config/db.js';
 
 dotenv.config();
 connectDB();
@@ -16,7 +16,7 @@ const seedProducts = async () => {
         description: 'Crispy salted potato chips',
         price: 20,
         category: 'Snacks',
-        image: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&q=80&w=200',
+        image: 'https://rukminim2.flixcart.com/image/850/1000/xif0q/chips/p/k/x/-original-imahyhghyhq7hhv2.jpeg?q=90',
         stock: 50,
         isAvailable: true
       },
@@ -25,7 +25,7 @@ const seedProducts = async () => {
         description: 'Spicy crunchy snack',
         price: 20,
         category: 'Snacks',
-        image: 'https://images.unsplash.com/photo-1600493036152-329479326079?auto=format&fit=crop&q=80&w=200',
+        image: 'https://rukminim2.flixcart.com/image/850/1000/xif0q/snack-kurkure/7/u/s/-original-imagp6mgyyzxghgz.jpeg?q=90',
         stock: 40,
         isAvailable: true
       },
@@ -34,7 +34,7 @@ const seedProducts = async () => {
         description: 'Chocolate chip cookies',
         price: 30,
         category: 'Biscuits',
-        image: 'https://images.unsplash.com/photo-1499636136210-65422ff0d330?auto=format&fit=crop&q=80&w=200',
+        image: 'https://rukminim2.flixcart.com/image/850/1000/xif0q/cookie-biscuit/k/x/p/-original-imagzt7yzzyhygzz.jpeg?q=90',
         stock: 30,
         isAvailable: true
       },
@@ -43,7 +43,7 @@ const seedProducts = async () => {
         description: 'World\'s largest selling biscuit',
         price: 10,
         category: 'Biscuits',
-        image: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&q=80&w=200',
+        image: 'https://rukminim2.flixcart.com/image/850/1000/xif0q/cookie-biscuit/k/z/o/-original-imahyhghyhq7hhv2.jpeg?q=90',
         stock: 100,
         isAvailable: true
       },
@@ -52,7 +52,7 @@ const seedProducts = async () => {
         description: 'Refreshing cold drink',
         price: 40,
         category: 'Drinks',
-        image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&q=80&w=200',
+        image: 'https://rukminim2.flixcart.com/image/850/1000/xif0q/aerated-drink/u/v/x/-original-imahyhghyhq7hhv2.jpeg?q=90',
         stock: 25,
         isAvailable: true
       },
@@ -61,7 +61,7 @@ const seedProducts = async () => {
         description: '2-Minute Masala Noodles',
         price: 15,
         category: 'Snacks',
-        image: 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&q=80&w=200',
+        image: 'https://rukminim2.flixcart.com/image/850/1000/xif0q/instant-noodles/p/u/v/-original-imahyhghyhq7hhv2.jpeg?q=90',
         stock: 60,
         isAvailable: true
       }

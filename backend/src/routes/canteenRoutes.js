@@ -5,7 +5,8 @@ import {
   getMyOrders,
   getAllOrders,
   updateOrderStatus,
-  addProduct
+  addProduct,
+  deleteProduct
 } from '../controllers/canteenController.js';
 import { protect, admin } from '../middleware/auth.js';
 
@@ -15,6 +16,9 @@ const router = express.Router();
 router.route('/products')
   .get(protect, getProducts)
   .post(protect, admin, addProduct);
+
+router.route('/products/:id')
+  .delete(protect, admin, deleteProduct);
 
 // Orders routes
 router.route('/order')

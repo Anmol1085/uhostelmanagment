@@ -24,8 +24,8 @@ const Login = () => {
       return;
     }
     
-    if (!email.endsWith('@gmail.com') && !email.endsWith('@example.com')) {
-      setError('Only @gmail.com or @example.com addresses are allowed');
+    if (!email.endsWith('@gmail.com') && !email.endsWith('@example.com') && !email.endsWith('@uhostel.com')) {
+      setError('Only @gmail.com, @example.com or @uhostel.com addresses are allowed');
       return;
     }
 
@@ -35,10 +35,13 @@ const Login = () => {
     try {
       const data = await api.post('/auth/login', { email, password });
       
-      setStep(2);
-      if (data.dev_otp) {
-        console.log('Development OTP:', data.dev_otp);
-        setError(`[DEV MODE] Your OTP is: ${data.dev_otp}`);
+      if (data.role) {
+        // Direct login for Admin
+        dispatch(setCredentials(data));
+        navigate('/dashboard');
+      } else {
+        // Normal OTP flow
+        setStep(2);
       }
     } catch (err) {
       console.error('Login Error:', err);

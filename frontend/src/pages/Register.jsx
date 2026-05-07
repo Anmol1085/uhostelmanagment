@@ -24,8 +24,8 @@ const Register = () => {
       return;
     }
 
-    if (!email.endsWith('@gmail.com') && !email.endsWith('@example.com')) {
-      setError('Only @gmail.com or @example.com addresses are allowed');
+    if (!email.endsWith('@gmail.com') && !email.endsWith('@example.com') && !email.endsWith('@uhostel.com')) {
+      setError('Only @gmail.com, @example.com or @uhostel.com addresses are allowed');
       return;
     }
 
@@ -39,15 +39,10 @@ const Register = () => {
         credentials: 'include',
         body: JSON.stringify({ name, email, password }),
       });
-      const data = await res.json();
-      
       if (res.ok) {
         setStep(2);
-        if (data.dev_otp) {
-          console.log('Development OTP:', data.dev_otp);
-          setError(`[DEV MODE] Your OTP is: ${data.dev_otp}`);
-        }
       } else {
+        const data = await res.json();
         setError(data.message || 'Registration failed');
       }
     } catch (err) {
